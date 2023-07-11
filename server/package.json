@@ -1,0 +1,25 @@
+{
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  },
+  "dependencies": {
+    "@hapi/hapi": "^21.3.2",
+    "@hapi/jwt": "^3.2.0",
+    "axios": "^1.4.0",
+    "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
+    "hapi-cors-headers": "^1.0.3",
+    "joi": "^17.9.2"
+  },
+  "name": "server-swrass",
+  "version": "1.0.0",
+  "description": "server for star wars rebels alliance search system",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server",
+    "dev": "nodemon server"
+  },
+  "author": "evan mansart",
+  "license": "MIT"
+}
