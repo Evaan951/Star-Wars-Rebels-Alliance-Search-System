@@ -13,6 +13,7 @@ interface PersonType {
   species: string[];
   starships: string[];
   vehicles: string[];
+  id:number;
 }
 
 const Person: React.FC = () => {
@@ -28,14 +29,9 @@ const Person: React.FC = () => {
     <div>
       <SearchBar updatePerson={updatePerson} />
       {person &&
-        <div>
+        <div style={{backgroundColor:'black', color:'white', width:'50%'}}>
+          <p>{person.id}</p>
           <p>{person.name}</p>
-          <p>{person.birth_year}</p>
-          <p>{person.gender}</p>
-          <p>{person.height}cm</p>
-          <p>{person.mass}kg</p>
-          <p>{person.hair_color}</p>
-          <p>{person.eye_color}</p>
         </div>
       }
 
