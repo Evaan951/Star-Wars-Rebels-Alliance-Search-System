@@ -98,7 +98,6 @@ const init = async () => {
             const currentUser = users[user];
             // Vérifie si l'utilisateur existe et si le token correspond
             const isValidToken = tokenIsValid(token)
-            console.log(isValidToken)
             if (currentUser && isValidToken) {
                 return { isValid: true };
             } else {
@@ -120,9 +119,7 @@ const init = async () => {
         },
         handler: async (request, h) => {
             const { isAuthenticated, credentials } = request.auth;
-            console.log(credentials)
-            console.log(isAuthenticated)
-            console.log(request)
+         
             //Récupération des paramètres de l'URL
             const { endpoint } = request.params;
             const { search } = request.query;
@@ -132,16 +129,39 @@ const init = async () => {
                 const response = await axios.get(url);
                 return response.data;
             } catch (error) {
-                console.log(error)
+                console.log(error.message)
                 throw new Error('Erreur lors de la recherche');
             }
         }
     });
 
+    server.route({
+        method: 'GET',
+        path: '/{endpoint}/{id}',
+        options: {
+            auth: 'jwt'
+        },
+        handler: async (request, h) => {
+            const { isAuthenticated, credentials } = request.auth;
+         
+            //Récupération des paramètres de l'URL
+            const { endpoint,id } = request.params;
+            const { search } = request.query;
+            // Création de l'URL (on vérifie si l'utilisateur fait une recherche ou non)
+            const url = `${API_ROOT}/${endpoint}/${id}${search ? `?search=${search}` : ''}`;
+            try {
+                const response = await axios.get(url);
+                return response.data;
+            } catch (error) {
+                
+                throw new Error(error.message)
+            }
+        }
+    });
     try {
         await server.start();
     } catch (err) {
-        console.log(err);
+        console.log(err.message);
         process.exit(1);
     }
     console.log('Serveur en écoute sur', server.info.uri);

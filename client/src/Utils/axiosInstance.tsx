@@ -9,7 +9,6 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
     (config) => {
         const token = sessionStorage.getItem('token'); // Récupère le jeton JWT depuis le stockage local
-        console.log(token)
         if (token) {
             config.headers.Authorization = `Bearer ${token}`; // Ajoute le jeton JWT dans l'en-tête Authorization
         }

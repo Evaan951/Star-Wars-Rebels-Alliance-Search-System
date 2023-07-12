@@ -6,12 +6,14 @@ import reportWebVitals from './reportWebVitals';
 import { RouterProvider, createBrowserRouter, defer, useRouteError } from 'react-router-dom';
 import Home from './Pages/Home';
 import Login from './Components/User/Login';
-import People from './Components/People/People';
-import Person from './Components/Person/Person';
+import People from './Pages/People/People';
+import Person from './Pages/People/Person';
 import { UserProvider } from './Context/UserContext';
 import Navbar from './Components/Navbar/Navbar';
 import axiosInstance from './Utils/axiosInstance';
 import ErrorElement from './Components/ErrorElement';
+import Starships from './Pages/Starships/Starships';
+import Starship from './Pages/Starships/Starship';
 
 
 
@@ -32,21 +34,41 @@ const router = createBrowserRouter([
       {
         path: "/people",
         element: <People />,
-        loader: async () =>  {
-          const response = await axiosInstance.get('/people')
-          const data = response.data
-          return defer(data)
-
-        },
-        children: [
-          {
-            path: '/people/:id',
-            element: <Person />,
-            loader: () => ({ message: "Hello Data Router!" }),
+        loader: async () => {
+          try {
+            // Chargement des données depuis l'API
+            const { data } = await axiosInstance.get('/people');
+            return defer(data);
+          } catch (error) {
+            // Gestion des erreurs
+            return error
           }
-        ]
+        },
       },
-    ]
+      {
+        path: '/people/:id',
+        element: <Person />,
+      },
+      {
+        path: "/starships",
+        element: <Starships />,
+        loader: async () => {
+          try {
+            // Chargement des données depuis l'API
+            const { data } = await axiosInstance.get('/starships');
+            console.log(data)
+            return defer(data);
+          } catch (error) {
+            // Gestion des erreurs
+            return error
+          }
+        },
+      },
+      {
+        path: "/starships/:id",
+        element: <Starship/>,
+      }
+    ],
   }
 ]);
 
