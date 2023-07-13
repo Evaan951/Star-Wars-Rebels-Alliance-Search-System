@@ -1,0 +1,27 @@
+
+.mainContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 2em;
+
+    .loginForm{
+        display: flex;
+        flex-direction: column;
+        row-gap: 2em;
+        justify-content: center;
+        align-items: center;
+        width: 90%;
+        input{
+            padding: 10px;
+            background-color: transparent;
+            border: none;
+            border-bottom: 1px solid grey;
+            color: white;
+
+            &::placeholder{
+                color: white;
+            }
+        }
+    }
+}

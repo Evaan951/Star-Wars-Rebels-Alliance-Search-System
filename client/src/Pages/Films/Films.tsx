@@ -1,4 +1,4 @@
-import React, { useState, MouseEvent, useEffect } from 'react';
+import React, { useState, MouseEvent, useEffect, useContext } from 'react';
 import { AxiosError } from 'axios';
 import axiosInstance from '../../Utils/axiosInstance';
 import SearchBar from '../../Components/Bar/SearchBar';
@@ -7,84 +7,83 @@ import globalStyle from '../../Styles/global.module.scss'
 import BackButton from '../../Components/Button/BackButton';
 
 
-interface PersonType {
-  name: string;
-  birth_year: string;
-  eye_color: string;
-  gender: string;
-  hair_color: string;
-  height: string;
-  mass: string;
+interface FilmsType {
+  title: string;
+  episode_id: number;
+  opening_crawl: string;
+  director: string;
+  producer: string;
+  release_date: Date;
   species: string[];
   starships: string[];
   vehicles: string[];
-  id: number;
+  characters: string[];
+  planets: string[];
   url: string;
 }
 
-
-interface PeopleResponseType {
+interface FilmsResponseType {
   count: number;
   next: string | null;
   previous: string | null;
-  results: PersonType[];
+  results: FilmsType[];
 }
 
 
-const People: React.FC = () => {
+const Films: React.FC = () => {
 
-  const [people, setPeople] = useState<PersonType[]>([])
+  const [films, setFilms] = useState<FilmsType[]>([])
   const [nextPage, setNextPage] = useState<string | null>(null)
   const [previousPage, setPreviousPage] = useState<string | null>(null)
-  const fetchedData = useLoaderData() as PeopleResponseType
+  const fetchedData = useLoaderData() as FilmsResponseType
   const navigate = useNavigate();
 
 
-  // Fonction pour passé à la page suivante
+  //Fonction pour passé à la page suivante
   const loadNextPage = async (e: MouseEvent) => {
     e.preventDefault()
     try {
       const { data } = await axiosInstance.get(nextPage!);
-      setPeople(data.results);
+      setFilms(data.results);
       setNextPage(data.next!)
       setPreviousPage(data.previous!)
     } catch (error) {
       console.error(error);
-      setPeople([])
+      setFilms([])
       setNextPage(null)
       setPreviousPage(null)
     }
   };
-  
-  // Fonction pour passé à la page précedente
+
+  //Fonction pour passé à la page précedente
   const loadPreviousPage = async (e: MouseEvent) => {
     e.preventDefault();
     try {
       const { data } = await axiosInstance.get(previousPage!);
-      setPeople(data.results);
+      setFilms(data.results);
       setNextPage(data.next!)
       setPreviousPage(data.previous!)
     } catch (error) {
-      console.error(error);
-      setPeople([])
+      setFilms([])
       setNextPage(null)
       setPreviousPage(null)
     }
   };
   useEffect(() => {
-    setPeople(fetchedData?.results)
+    setFilms(fetchedData?.results)
     setNextPage(fetchedData?.next!)
     setPreviousPage(fetchedData?.previous!)
     return () => {
-      setPeople([])
+      setFilms([])
       setNextPage(null)
       setPreviousPage(null)
     }
   }, [fetchedData])
 
-  const handleGoToPerson = (e: MouseEvent, person: PersonType) => {
-    navigate(`/people/${person.id}`, { state: { person } });
+  const handleGoToFilm = (e: MouseEvent, film: FilmsType) => {
+    navigate(`/films/${film.episode_id}`, { state: { film } });
   };
+
 
   // On vérifie si les données passé depuis le loader ne sont pas instance de AxiosError.
   // Si oui on retourne un message d'erreur 
@@ -99,28 +98,29 @@ const People: React.FC = () => {
     <>
       <BackButton />
       <div className={globalStyle.listContainer}>
-        <SearchBar dataType='people'/>
+        <SearchBar dataType='films' />
         <div className={globalStyle.cardContainer}>
           {
             fetchedData.count > 0 &&
-            people.map((person: PersonType, key: number) => {
-              const url = person.url;
+            films.map((film: FilmsType, key: number) => {
+              const url = film.url;
               const regex = /\/(\d+)\/$/; // Recherche le nombre entre les deux slashs et à la fin de l'URL
               const match = url.match(regex);
               if (match) {
                 const number = match[1];
-                person.id = parseInt(number);
+                film.episode_id = parseInt(number);
               }
 
               return (
                 <div className={globalStyle.card} key={key} >
-                  <p className={globalStyle.cardTitle}>{person.name} </p>
-                  <button className={globalStyle.button} onClick={(e) => handleGoToPerson(e, person)}>Show More</button>
+                  <p className={globalStyle.cardTitle}>{film.title} </p>
+                  <button className={globalStyle.button} onClick={(e) => handleGoToFilm(e, film)}>Show more</button>
                 </div>
               )
 
             })
           }
+
         </div>
         <div className={globalStyle.buttonContainer}>
           {nextPage && <button className={globalStyle.button} onClick={loadNextPage}>Next</button>}
@@ -128,7 +128,8 @@ const People: React.FC = () => {
         </div>
       </div>
     </>
+
   );
 };
 
-export default People;
+export default Films;

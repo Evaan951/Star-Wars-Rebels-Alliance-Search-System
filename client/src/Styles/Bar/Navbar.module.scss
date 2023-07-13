@@ -1,0 +1,39 @@
+.navbar {
+
+    display: flex;
+    padding: 1em;
+    border-bottom: 1px solid grey;
+    margin-bottom: 1em;
+    flex-direction: row;
+    justify-content: space-between;
+    @media screen and (max-width:475px) {
+        flex-direction: column;
+    }
+
+
+    .title {
+        font-size: 24px;
+        width: 100%;
+        &:hover{
+            cursor: pointer;
+        }
+    }
+
+    .navContainer {
+        display: flex;
+        flex-direction: row;
+        justify-content: end;
+        column-gap: 2em;
+        align-items: flex-end;
+        .linkNav {
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+        }
+
+        .userIcon {
+            width: 25px;
+        }
+    }
+
+}

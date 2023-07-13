@@ -39,11 +39,14 @@ export const UserProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
                 const payload = { user, token }
                 const response = await axios.post('http://localhost:3001/checkUserSession', payload);
                 const data = response.data;
+                //Mise à jour de l'utilisateur si celui-ci est valide
                 if (data.isValid) {
                     setUser({ username: sessionStorage.getItem('user'), isConnected: true });
+                }else{
+                    setUser({username:null, isConnected:false})
                 }
             } catch (error) {
-                console.error('Erreur lors de la vérification de la session utilisateur :', error);
+                console.error('Error when checking user session :', error);
             }
         };
 

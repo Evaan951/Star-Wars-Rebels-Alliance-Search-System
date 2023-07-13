@@ -7,83 +7,83 @@ import globalStyle from '../../Styles/global.module.scss'
 import BackButton from '../../Components/Button/BackButton';
 
 
-interface PersonType {
+
+interface SpeciesType {
   name: string;
-  birth_year: string;
-  eye_color: string;
-  gender: string;
-  hair_color: string;
-  height: string;
-  mass: string;
-  species: string[];
-  starships: string[];
-  vehicles: string[];
-  id: number;
+  classification: string;
+  designation: string;
+  average_height: string;
+  average_lifespan: string;
+  eye_colors: Date;
+  hair_colors: string;
+  skin_colors: string;
+  language: string;
+  homeworld: string;
+  people: string[];
+  films: string;
   url: string;
+  id: number;
 }
 
-
-interface PeopleResponseType {
+interface SpeciesResponseType {
   count: number;
   next: string | null;
   previous: string | null;
-  results: PersonType[];
+  results: SpeciesType[];
 }
 
 
-const People: React.FC = () => {
+const Species: React.FC = () => {
 
-  const [people, setPeople] = useState<PersonType[]>([])
+  const [species, setSpecies] = useState<SpeciesType[]>([])
   const [nextPage, setNextPage] = useState<string | null>(null)
   const [previousPage, setPreviousPage] = useState<string | null>(null)
-  const fetchedData = useLoaderData() as PeopleResponseType
+  const fetchedData = useLoaderData() as SpeciesResponseType
   const navigate = useNavigate();
-
 
   // Fonction pour passé à la page suivante
   const loadNextPage = async (e: MouseEvent) => {
     e.preventDefault()
     try {
       const { data } = await axiosInstance.get(nextPage!);
-      setPeople(data.results);
+      setSpecies(data.results);
       setNextPage(data.next!)
       setPreviousPage(data.previous!)
     } catch (error) {
       console.error(error);
-      setPeople([])
+      setSpecies([])
       setNextPage(null)
       setPreviousPage(null)
     }
   };
-  
-  // Fonction pour passé à la page précedente
+  // Fonction pour passé à la page précédente
   const loadPreviousPage = async (e: MouseEvent) => {
     e.preventDefault();
     try {
       const { data } = await axiosInstance.get(previousPage!);
-      setPeople(data.results);
+      setSpecies(data.results);
       setNextPage(data.next!)
       setPreviousPage(data.previous!)
     } catch (error) {
       console.error(error);
-      setPeople([])
+      setSpecies([])
       setNextPage(null)
       setPreviousPage(null)
     }
   };
   useEffect(() => {
-    setPeople(fetchedData?.results)
+    setSpecies(fetchedData?.results)
     setNextPage(fetchedData?.next!)
     setPreviousPage(fetchedData?.previous!)
     return () => {
-      setPeople([])
+      setSpecies([])
       setNextPage(null)
       setPreviousPage(null)
     }
   }, [fetchedData])
 
-  const handleGoToPerson = (e: MouseEvent, person: PersonType) => {
-    navigate(`/people/${person.id}`, { state: { person } });
+  const handleGoToSpecies = (e: MouseEvent, specie: SpeciesType) => {
+    navigate(`/species/${specie.id}`, { state: { specie } });
   };
 
   // On vérifie si les données passé depuis le loader ne sont pas instance de AxiosError.
@@ -99,23 +99,23 @@ const People: React.FC = () => {
     <>
       <BackButton />
       <div className={globalStyle.listContainer}>
-        <SearchBar dataType='people'/>
+        <SearchBar dataType='species' />
         <div className={globalStyle.cardContainer}>
           {
             fetchedData.count > 0 &&
-            people.map((person: PersonType, key: number) => {
-              const url = person.url;
+            species.map((specie: SpeciesType, key: number) => {
+              const url = specie.url;
               const regex = /\/(\d+)\/$/; // Recherche le nombre entre les deux slashs et à la fin de l'URL
               const match = url.match(regex);
               if (match) {
                 const number = match[1];
-                person.id = parseInt(number);
+                specie.id = parseInt(number);
               }
 
               return (
                 <div className={globalStyle.card} key={key} >
-                  <p className={globalStyle.cardTitle}>{person.name} </p>
-                  <button className={globalStyle.button} onClick={(e) => handleGoToPerson(e, person)}>Show More</button>
+                  <p className={globalStyle.cardTitle}>{specie.name} </p>
+                  <button className={globalStyle.button} onClick={(e) => handleGoToSpecies(e, specie)}>Show More</button>
                 </div>
               )
 
@@ -123,12 +123,17 @@ const People: React.FC = () => {
           }
         </div>
         <div className={globalStyle.buttonContainer}>
+
           {nextPage && <button className={globalStyle.button} onClick={loadNextPage}>Next</button>}
           {previousPage && <button className={globalStyle.button} onClick={loadPreviousPage}>Back</button>}
+
         </div>
+
+
       </div>
     </>
+
   );
 };
 
-export default People;
+export default Species;

@@ -1,7 +1,8 @@
 import React, { useState, FormEvent, ChangeEvent, useContext, MouseEvent } from 'react';
 import axios from 'axios';
 import { UserContext, UserContextType } from '../../Context/UserContext';
-
+import gloablStyle from '../../Styles/global.module.scss'
+import style from '../../Styles/Login/login.module.scss'
 const Login: React.FC = () => {
 
   //State nécéssaire au composant.
@@ -20,10 +21,10 @@ const Login: React.FC = () => {
       sessionStorage.removeItem('token')
       updateUser(null, false);
       setError('')
-      setSuccessMsg('Vous êtes bien déconnecté')
+      setSuccessMsg('Disconnection successful')
     } else {
       updateUser(null, false);
-      setError("Vous n'êtes pas connecté")
+      setError("You're not connected. Please login")
       setSuccessMsg('')
     }
 
@@ -46,11 +47,11 @@ const Login: React.FC = () => {
         sessionStorage.setItem('token', token)
         updateUser(user, true);
         setError('');
-        setSuccessMsg(`Bienvenu Jedi ${user}`)
+        setSuccessMsg(`Welcom Jedi ${user}`)
       }
 
     } catch (error) {
-      setError('Échec de la connexion');
+      setError('Connection Failed');
       setSuccessMsg('')
       updateUser(null, false);
 
@@ -67,26 +68,30 @@ const Login: React.FC = () => {
 
 
   return (
-    <div>
-      <h2>Connexion</h2>
-      {user?.username && <p>{user.username} / {user.isConnected ? 'connecté' : ''}</p>}
-      <form onSubmit={handleLogin}>
-        <input
-          type="text"
-          placeholder="Nom d'utilisateur"
-          value={username}
-          onChange={handleUsernameChange}
-        />
-        <input
-          type="password"
-          placeholder="Mot de passe"
-          value={password}
-          onChange={handlePasswordChange}
-        />
-        {!user.isConnected && <button type="submit">Se connecter</button>}
-        {user.isConnected && <button onClick={handleLogout}>Logout</button>}
-        {successMsg && <p>{successMsg}</p>}
-        {error && <p>{error}</p>}
+    <div className={style.mainContainer}>
+      <h2>LOGIN</h2>
+      {user?.username && <p>You're connected as : <span>{user.username} </span></p>}
+      <form className={style.loginForm} onSubmit={handleLogin}>
+        {!user.isConnected &&
+          <>
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={handleUsernameChange}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={handlePasswordChange}
+            />
+            <button className={gloablStyle.button} type="submit">Login</button>
+          </>
+        }
+        {user.isConnected && <button className={gloablStyle.button} onClick={handleLogout}>Logout</button>}
+        {successMsg && <p className={gloablStyle.successMessage}>{successMsg}</p>}
+        {error && <p className={gloablStyle.errorMessage}>{error}</p>}
       </form>
     </div>
   );

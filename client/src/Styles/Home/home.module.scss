@@ -1,0 +1,27 @@
+.homeContainer{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: 1em;
+    row-gap: 1em;
+    justify-content: center;
+    .homeCard{
+        width: 80%;
+        padding: 1em;
+        border: 1px solid grey;
+        border-top-left-radius: 1em;
+        border-bottom-right-radius: 1em;
+        display: flex;
+        flex-direction: column;
+        row-gap: 2em;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+        .homeCardTitle{
+            font-size: 22px;
+            font-weight: 600;
+        }
+    }
+
+    
+}

@@ -1,10 +1,10 @@
-import React, { useState, FormEvent, ChangeEvent, useContext, MouseEvent, useEffect, useRef } from 'react';
-import axios, { Axios, AxiosError } from 'axios';
-import { UserContext, UserContextType } from '../../Context/UserContext';
+import React, { useState, MouseEvent, useEffect } from 'react';
+import { AxiosError } from 'axios';
 import axiosInstance from '../../Utils/axiosInstance';
-import { ErrorCallback, forEachChild } from 'typescript';
-import SearchBar from '../../Components/SearchBar';
-import { Link, redirect, useLoaderData, useNavigate, useRouteError } from 'react-router-dom';
+import SearchBar from '../../Components/Bar/SearchBar';
+import { useLoaderData, useNavigate, } from 'react-router-dom';
+import globalStyle from '../../Styles/global.module.scss'
+import BackButton from '../../Components/Button/BackButton';
 
 
 
@@ -19,7 +19,7 @@ interface StarshipsType {
   model: string[];
   passengers: string[];
   manufacturer: string[];
-  pilots:string[];
+  pilots: string[];
   id: number;
   url: string;
 }
@@ -41,7 +41,7 @@ const Starships: React.FC = () => {
   const fetchedData = useLoaderData() as StarshipsResponseType
   const navigate = useNavigate();
 
-
+  // Fonction pour passé à la page suivante
   const loadNextPage = async (e: MouseEvent) => {
     e.preventDefault()
     try {
@@ -57,6 +57,7 @@ const Starships: React.FC = () => {
     }
   };
 
+  // Fonction pour passé à la page précédente
   const loadPreviousPage = async (e: MouseEvent) => {
     e.preventDefault();
     try {
@@ -86,42 +87,52 @@ const Starships: React.FC = () => {
     navigate(`/starships/${starship.id}`, { state: { starship } });
   };
 
-
+  // On vérifie si les données passé depuis le loader ne sont pas instance de AxiosError.
+  // Si oui on retourne un message d'erreur 
   if (fetchedData instanceof AxiosError) {
     if (fetchedData.response?.data.message === 'Missing authentication') {
-      return (<p>Veuillez vous connecter pour accéder au données</p>)
+      return (<p className={globalStyle.errorMessage}>Please login to access data.</p>)
 
     }
-    return (<p>Une erreur est survenue pendant le chargement des données. Veuillez ressayer ultérieurement</p>)
+    return (<p className={globalStyle.errorMessage}>An error occured. Please try again later</p>)
   }
   return (
-    <div>
-      <SearchBar/>
-      {
-        fetchedData.count > 0 &&
-        starships.map((starship: StarshipsType, key: number) => {
-          const url = starship.url;
-          const regex = /\/(\d+)\/$/; // Recherche le nombre entre les deux slashs et à la fin de l'URL
-          const match = url.match(regex);
-          if (match) {
-            const number = match[1];
-            starship.id = parseInt(number);
+    <>
+      <BackButton />
+      <div className={globalStyle.listContainer}>
+        <SearchBar dataType='starships' />
+        <div className={globalStyle.cardContainer}>
+          {
+            fetchedData.count > 0 &&
+            starships.map((starship: StarshipsType, key: number) => {
+              const url = starship.url;
+              const regex = /\/(\d+)\/$/; // Recherche le nombre entre les deux slashs et à la fin de l'URL
+              const match = url.match(regex);
+              if (match) {
+                const number = match[1];
+                starship.id = parseInt(number);
+              }
+
+              return (
+                <div className={globalStyle.card} key={key} >
+                  <p className={globalStyle.cardTitle}>{starship.name} </p>
+                  <button className={globalStyle.button} onClick={(e) => handleGoToStarship(e, starship)}>Show More</button>
+                </div>
+              )
+
+            })
           }
-          
-          return (
-            <div key={key} >
-              <p>{starship.name} </p>
-              <button onClick={(e) => handleGoToStarship(e, starship)}>En savoir plus</button>
-            </div>
-          )
+        </div>
+        <div className={globalStyle.buttonContainer}>
 
-        })
-      }
-      {nextPage && <button onClick={loadNextPage}>Suivant</button>}
-      {previousPage && <button onClick={loadPreviousPage}>Précédent</button>}
+          {nextPage && <button className={globalStyle.button} onClick={loadNextPage}>Next</button>}
+          {previousPage && <button className={globalStyle.button} onClick={loadPreviousPage}>Back</button>}
+        </div>
 
 
-    </div>
+      </div>
+    </>
+
   );
 };
 

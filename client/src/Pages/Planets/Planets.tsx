@@ -7,83 +7,83 @@ import globalStyle from '../../Styles/global.module.scss'
 import BackButton from '../../Components/Button/BackButton';
 
 
-interface PersonType {
+
+interface PlanetsType {
   name: string;
-  birth_year: string;
-  eye_color: string;
-  gender: string;
-  hair_color: string;
-  height: string;
-  mass: string;
-  species: string[];
-  starships: string[];
-  vehicles: string[];
-  id: number;
+  diameter: string;
+  rotation_period: string;
+  orbital_period: string;
+  gravity: string;
+  population: Date;
+  climate: string;
+  terrain: string;
+  surface_water: string;
+  residents: string;
+  films: string[];
   url: string;
+  id: number;
 }
 
-
-interface PeopleResponseType {
+interface PlanetsResponseType {
   count: number;
   next: string | null;
   previous: string | null;
-  results: PersonType[];
+  results: PlanetsType[];
 }
 
 
-const People: React.FC = () => {
+const Planets: React.FC = () => {
 
-  const [people, setPeople] = useState<PersonType[]>([])
+  const [planets, setPlanets] = useState<PlanetsType[]>([])
   const [nextPage, setNextPage] = useState<string | null>(null)
   const [previousPage, setPreviousPage] = useState<string | null>(null)
-  const fetchedData = useLoaderData() as PeopleResponseType
+  const fetchedData = useLoaderData() as PlanetsResponseType
   const navigate = useNavigate();
-
 
   // Fonction pour passé à la page suivante
   const loadNextPage = async (e: MouseEvent) => {
     e.preventDefault()
     try {
       const { data } = await axiosInstance.get(nextPage!);
-      setPeople(data.results);
+      setPlanets(data.results);
       setNextPage(data.next!)
       setPreviousPage(data.previous!)
     } catch (error) {
       console.error(error);
-      setPeople([])
+      setPlanets([])
       setNextPage(null)
       setPreviousPage(null)
     }
   };
-  
-  // Fonction pour passé à la page précedente
+
+  // Fonction pour passé à la page précédente
   const loadPreviousPage = async (e: MouseEvent) => {
     e.preventDefault();
     try {
       const { data } = await axiosInstance.get(previousPage!);
-      setPeople(data.results);
+      setPlanets(data.results);
       setNextPage(data.next!)
       setPreviousPage(data.previous!)
     } catch (error) {
       console.error(error);
-      setPeople([])
+      setPlanets([])
       setNextPage(null)
       setPreviousPage(null)
     }
   };
   useEffect(() => {
-    setPeople(fetchedData?.results)
+    setPlanets(fetchedData?.results)
     setNextPage(fetchedData?.next!)
     setPreviousPage(fetchedData?.previous!)
     return () => {
-      setPeople([])
+      setPlanets([])
       setNextPage(null)
       setPreviousPage(null)
     }
   }, [fetchedData])
 
-  const handleGoToPerson = (e: MouseEvent, person: PersonType) => {
-    navigate(`/people/${person.id}`, { state: { person } });
+  const handleGoToPlanet = (e: MouseEvent, planet: PlanetsType) => {
+    navigate(`/planets/${planet.id}`, { state: { planet } });
   };
 
   // On vérifie si les données passé depuis le loader ne sont pas instance de AxiosError.
@@ -99,23 +99,23 @@ const People: React.FC = () => {
     <>
       <BackButton />
       <div className={globalStyle.listContainer}>
-        <SearchBar dataType='people'/>
+        <SearchBar dataType='planets' />
         <div className={globalStyle.cardContainer}>
           {
             fetchedData.count > 0 &&
-            people.map((person: PersonType, key: number) => {
-              const url = person.url;
+            planets.map((planet: PlanetsType, key: number) => {
+              const url = planet.url;
               const regex = /\/(\d+)\/$/; // Recherche le nombre entre les deux slashs et à la fin de l'URL
               const match = url.match(regex);
               if (match) {
                 const number = match[1];
-                person.id = parseInt(number);
+                planet.id = parseInt(number);
               }
 
               return (
                 <div className={globalStyle.card} key={key} >
-                  <p className={globalStyle.cardTitle}>{person.name} </p>
-                  <button className={globalStyle.button} onClick={(e) => handleGoToPerson(e, person)}>Show More</button>
+                  <p className={globalStyle.cardTitle}>{planet.name} </p>
+                  <button className={globalStyle.button} onClick={(e) => handleGoToPlanet(e, planet)}>Show More</button>
                 </div>
               )
 
@@ -125,10 +125,14 @@ const People: React.FC = () => {
         <div className={globalStyle.buttonContainer}>
           {nextPage && <button className={globalStyle.button} onClick={loadNextPage}>Next</button>}
           {previousPage && <button className={globalStyle.button} onClick={loadPreviousPage}>Back</button>}
+
         </div>
+
+
       </div>
     </>
+
   );
 };
 
-export default People;
+export default Planets;

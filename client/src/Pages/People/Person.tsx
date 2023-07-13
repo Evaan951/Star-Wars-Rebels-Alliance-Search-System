@@ -1,8 +1,10 @@
 import React, { useState, ChangeEvent, useEffect } from 'react';
 import axiosInstance from '../../Utils/axiosInstance';
-import SearchBar from '../../Components/SearchBar';
+import SearchBar from '../../Components/Bar/SearchBar';
 import { useLoaderData, useLocation } from 'react-router-dom';
 import axios, { Axios, AxiosError } from 'axios';
+import globalStyle from '../../Styles/global.module.scss';
+import BackButton from '../../Components/Button/BackButton';
 
 interface PersonType {
   name: string;
@@ -28,10 +30,8 @@ const Person: React.FC = () => {
     try {
       let personID;
       const url = location.pathname
-      console.log(url)
       const regex = /(\d+)$/; // Recherche le nombre en fin de chaine
       const match = url.match(regex);
-      console.log(match)
       if (match) {
         const number = match[0];
         personID = parseInt(number);
@@ -50,8 +50,11 @@ const Person: React.FC = () => {
     }
 
   }
-  console.log(location)
-
+  /* 
+   On verifie si une donnée à été passée pendant la navigation par le composant Parent
+   Si oui, on met le composant à jour avec cette même donnée.
+   Si non, on execute la function fetchData qui nous permet de récupérer la donnée en fonction de l'id dans notre url.
+  */
   useEffect(() => {
     if (!result) {
       fetchData()
@@ -62,13 +65,23 @@ const Person: React.FC = () => {
       setPerson(null)
     }
   }, [result])
-  console.log(person)
 
   return (
-    <div>
-      <SearchBar />
-      {person && <p>{person.name}</p>}
-    </div>
+    <>
+      <BackButton />
+
+      {person &&
+        <div className={globalStyle.detailsContainer}>
+          <p>Name: <span> {person.name}</span></p>
+          <p>Gender: <span> {person.gender}</span></p>
+          <p>Birth Year: <span> {person.birth_year}</span></p>
+          <p>Height: <span> {person.height}cm</span></p>
+          <p>Mass: <span>{person.mass}kg</span></p>
+          <p>Eye Color: <span>{person.eye_color}</span></p>
+          <p>Hair Color: <span>{person.hair_color}</span></p>
+        </div>
+      }
+    </>
   );
 };
 
